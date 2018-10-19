@@ -3,7 +3,8 @@ Backend of hack-the-hack, using Kafka and NN to predict winning hackathon projec
 
 Demo: https://lindayi.me/projects/hack-the-hack/
 
-## Architecture
+## System Overview
+![](https://lindayi.me/wp-content/uploads/2018/10/overview.jpg)
 
 ## Requirements
 Python 3
