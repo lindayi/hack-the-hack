@@ -7,7 +7,9 @@ Demo: https://lindayi.me/projects/hack-the-hack/
 
 ## Requirements
 Python 3
+
 Kafka (0.9+)
+
 MySQL
 
 ## Configuration
