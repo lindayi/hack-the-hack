@@ -44,7 +44,10 @@ class HackathonCrawler():
 		tmp_hackathon = {"hackathon_alias": hackathon_alias}
 		
 		try:
+			# Extract hackathon title
 			tmp_hackathon["title"] = page.find(property="og:site_name")["content"]
+			
+			# Extract judges
 			judge_block = page.find_all(class_="challenge_judge")
 			for judge in judge_block:
 				judge_name = str_escape(judge.find("strong").get_text())
@@ -52,7 +55,8 @@ class HackathonCrawler():
 				judge_list.append({judge_name : judge_aff})
 				
 			tmp_hackathon["judge_list"] = judge_list
-				
+			
+			# Extract start and end time
 			year_text = page.find(class_="addthis_button_reddit")["addthis:url"]
 			year_text = re.search("utm_campaign=.*\.([0-9]+).*utm_content", year_text).group(1)
 			
@@ -66,6 +70,7 @@ class HackathonCrawler():
 			tmp_hackathon["startdate"] = str(self.date_convert(year_text + " " + startdate_text))
 			tmp_hackathon["enddate"] = str(self.date_convert(year_text + " " + enddate_text))
 			
+			# Send the hackathon to Kafka for persistence
 			self.__producer.send('hackathon_persistent', tmp_hackathon)
 			self.__producer.flush()
 
@@ -82,6 +87,7 @@ def producer_pool(hackathon_alias):
 	crawler.crawl_hackathons(hackathon_alias)
 
 def main():
+	# Read configs
 	config = configparser.ConfigParser()
 	config.read("hth.properties")
 	
@@ -90,6 +96,7 @@ def main():
 	logging.basicConfig(filename='crawler_hackathon.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 	install_mp_handler()
 	
+	# Get hackathon list
 	hackathon_list = []
 
 	sql = "SELECT DISTINCT hackathon_alias FROM project WHERE hackathon_alias != ''"
@@ -98,6 +105,7 @@ def main():
 	for row in results:
 		hackathon_list.append(str(row[0]))
 
+	# Start multiple processes as Hackathon Producer
 	nprocess = 2
 	pool = Pool(nprocess)
 	results = pool.map(producer_pool, hackathon_list)

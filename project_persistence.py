@@ -40,6 +40,7 @@ def main():
 	logging.basicConfig(filename='project_persistence.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 	install_mp_handler()
 
+	# Start multiple processes as Project Persistence
 	nprocess = 1
 	pool = Pool(nprocess)
 	results = pool.map(consumer_pool, range(1, nprocess + 1))

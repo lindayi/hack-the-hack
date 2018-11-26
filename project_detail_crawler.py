@@ -70,6 +70,7 @@ def main():
 	logging.basicConfig(filename='crawler_project_detail.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 	install_mp_handler()
 
+	# Start multiple processes as Project Detail Enhancer
 	nprocess = 16
 	pool = Pool(nprocess)
 	results = pool.map(consumer_pool, range(1, nprocess + 1))
